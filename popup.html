@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<link href="popup.css" rel="stylesheet" type="text/css" />
+<script type="module" src="popup.js"></script>
+
+<div class="container">
+  <div class="title">Welcome to Youtube time limiter</div>
+  <div id="ActivationButton">
+    <label for="toggleButton">Activate</label>
+    <input type="checkbox" id="toggleButton" class="toggle-checkbox">
+  </div>
+  <div id="timerSet" hidden>
+    <div id="timeInput">
+      <label for="hoursInput">Hours:</label>
+      <input type="number" id="hoursInput" placeholder="0" min="0" required>
+      <label for="minutesInput">Minutes:</label>
+      <input type="number" id="minutesInput" placeholder="0" min="0" max="59" required>
+      <button type="button" id="timeSubmit">Submit</button>
+    </div>
+  </div>
+  <button type="button" id="resetButton" hidden>reset</button>
+
+  <div id="countdownDisplay" hidden></div>
+</div>
+
+</html>
