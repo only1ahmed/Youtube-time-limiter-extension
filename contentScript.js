@@ -5,6 +5,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         // Example: Update the content of the page
         document.body.innerHTML = `<p color='red'>${data}</p>`;
     }
+    if (message.action === "reload") {
+        // This will force the page to reload from the server
+        location.reload(true);
+    }
 });
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM fully loaded and parsed.');

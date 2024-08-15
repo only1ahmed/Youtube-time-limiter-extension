@@ -10,7 +10,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const submitButton = document.getElementById('timeSubmit');
     const countdownDisplay = document.getElementById("countdownDisplay");
     submitButton.addEventListener('click', submitTime);
-    toggleButton.addEventListener('change', () => toggleState(toggleButton));
+    toggleButton.addEventListener('change', () => {
+        console.log("toggling button in popup.js..");
+        toggleState(toggleButton);
+
+    });
     console.log(toggleButton);
 
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -38,8 +42,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function toggleState(toggleButton) {
     let isEnabled = toggleButton.checked;
+    console.log("toggle button is now: ", isEnabled);
     chrome.runtime.sendMessage({ action: "toggle" }, (response) => {
-        console.log("toggle button is now: ", isEnabled);
+        // console.log("toggle button is now: ", isEnabled);
         if (isEnabled) {
             if (response.action === "viewTimer") {
                 document.getElementById('timerSet').setAttribute('hidden', '');
@@ -53,9 +58,12 @@ function toggleState(toggleButton) {
                 console.log("hided the countdown");
             }
 
+
+
         }
         else {
-            console.log("Extension down, hide timerset..");
+            console.log("Extension down, hide timer and the timerset and reload the page..");
+
             document.getElementById('timerSet').setAttribute('hidden', '');
             document.getElementById('countdownDisplay').setAttribute('hidden', '');
         }
