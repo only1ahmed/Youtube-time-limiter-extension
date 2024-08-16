@@ -1,11 +1,10 @@
 // chrome.tabs.active();
-var isEnabled;
-var timeLeft;
-var timeLimit;
-var tabsids = new Set();
+let isEnabled;
+let timeLeft;
+let timeLimit;
+let tabsids = new Set();
 let isRunning = false;
-// var allData;
-
+// chrome.storage.local.clear();
 // main call to activate the background
 listners();
 
@@ -19,7 +18,10 @@ async function getStartingData() {
 async function listners() {
     console.log("this is the start of the service worker");
 
-    await getStartingData();
+    // await getStartingData();
+    isEnabled = await getDataFromStorage("enabled");
+    timeLeft = await getDataFromStorage("timeLeft");
+    timeLimit = await getDataFromStorage("timeLimit");
     console.log("the starting data: ");
     console.log("enabled: ", isEnabled);
     console.log("time left: ", timeLeft);
@@ -37,7 +39,7 @@ async function listners() {
         tabsids.delete(tabId);
         console.log(`Tab with ID ${tabId} removed. Current open tabs:`, tabsids);
     });
-    await scheduleReset();
+    scheduleReset();
     console.log("tab triggered enabled: ", isEnabled);
     console.log("tab triggered time left: ", timeLeft);
     console.log("tab triggered time limit: ", timeLimit);
@@ -46,7 +48,7 @@ async function listners() {
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         console.log("Received message:", message);
         if (message.action === "loaded") {
-            mainAction();
+            // mainAction();
         }
         if (message.action === "toggle") {
             console.log("isEnabled before: ", isEnabled);
@@ -69,7 +71,7 @@ async function listners() {
                     sendResponse({ action: "unknown" });
                     console.log("How am i here..");
                 }
-                mainAction();
+                // mainAction();
             }
             else {
                 // send a message to content script to reload the page because the extension is disabled
@@ -108,10 +110,12 @@ async function listners() {
         return true;
     });
 
-    const countdownInterval = setInterval(() => {
+    const countdownInterval = setInterval(async () => {
         // check continusly to activate the block
-        if (isEnabled === true) {
-            mainAction();
+        if (isEnabled === true && timeLeft > 0 && isRunning === false) {
+            isRunning = true;
+            await mainAction();
+            isRunning = false;
         }
     }, 1000);
 
@@ -122,74 +126,77 @@ async function listners() {
 // this handles the overlapping between async operations
 // calling the function more than 1 time won't be a problem because it uses the same global variable (timeLeft), so whenever the timeLimit is changed, the function will keep running or will stop (depending on the timeLeft value)
 
-function mainAction() {
+async function mainAction() {
     console.log("main action running..");
     console.log("main action running while extension is enabled: ", isEnabled);
     console.log("main action running while mainaction is running: ", isRunning);
     // TODO: handle async calls
-    if (isRunning) {
-        return;
-    }
-    isRunning = true;
-    if (isEnabled === true) {
-        if (timeLeft <= 0) {
-            // message contentscript to edit the youtube page to prevent the user from accessing youtube
-            console.log("time is up before, you should blockwebpage..");
-            isRunning = 0;
-            console.log("done main action because time left is 0..");
-            blockWebpage();
-            return;
-        }
-        else if (timeLeft > 0) {
-            // start the timer
+    return new Promise((resolve, reject) => {
 
-            // const countdownDisplay = document.getElementById("countdownDisplay");
-            // Display the countdown
-            updateCountdownDisplay();
-            console.log(timeLeft, 'time left');
-            const countdownInterval = setInterval(() => {
-                // at any point of time, if the toggle swtich is off, stop the countdown and save the timeleft into the memory
-                if (!isEnabled) {
-                    clearInterval(countdownInterval);
-                    chrome.storage.local.set({ timeLeft: timeLeft });
-                    isRunning = false;
-                    return;
-                }
-                timeLeft--;
+        if (isEnabled === true) {
+            if (timeLeft <= 0) {
+                // message contentscript to edit the youtube page to prevent the user from accessing youtube
+                console.log("time is up before, you should blockwebpage..");
+                isRunning = false;
+                console.log("done main action because time left is 0..");
+                blockWebpage();
+                resolve();
+
+            }
+            else if (timeLeft > 0) {
+                // start the timer
+
+                // const countdownDisplay = document.getElementById("countdownDisplay");
+                // Display the countdown
                 updateCountdownDisplay();
-                if (timeLeft > 0) {
+                console.log(timeLeft, 'time left');
+                const countdownInterval = setInterval(() => {
+                    // at any point of time, if the toggle swtich is off, stop the countdown and save the timeleft into the memory
+                    if (!isEnabled) {
+                        clearInterval(countdownInterval);
+                        chrome.storage.local.set({ timeLeft: timeLeft });
+                        isRunning = false;
+                        return;
+                    }
+                    timeLeft--;
+                    if (timeLeft > 0) {
+                        updateCountdownDisplay();
 
-                } else {
-                    clearInterval(countdownInterval);
-                    chrome.storage.local.set({ timeLeft: 0 });
+                    } else {
+                        // updateCountdownDisplay();
+
+                        clearInterval(countdownInterval);
+                        chrome.storage.local.set({ timeLeft: 0 });
+                        // message contentscript to edit the youtube page to prevent the user from accessing youtube
+                        blockWebpage();
+                        // call the popup to display a message
+                        resolve();
 
 
-                    // message contentscript to edit the youtube page to prevent the user from accessing youtube
-                    blockWebpage();
-                    // call the popup to display a message
+                    }
+                }, 1000);
+            }
+            else {
+                resolve();
 
+                // // the popup shall ask for time input
+                // console.log("getting time limit..");
+                // chrome.runtime.sendMessage({ action: "getTimeLimit" }, (response) => {
+                //     // timeLimit = response.timeLimit;
+                //     // timeLeft = response.timeLimit;
+                //     // chrome.storage.local.set({ timeLimit: timeLimit });
+                //     // chrome.storage.local.set({ timeLeft: timeLeft });
+                // });
 
-                }
-            }, 1000);
+            }
         }
         else {
-            // // the popup shall ask for time input
-            // console.log("getting time limit..");
-            // chrome.runtime.sendMessage({ action: "getTimeLimit" }, (response) => {
-            //     // timeLimit = response.timeLimit;
-            //     // timeLeft = response.timeLimit;
-            //     // chrome.storage.local.set({ timeLimit: timeLimit });
-            //     // chrome.storage.local.set({ timeLeft: timeLeft });
-            // });
-
+            // popup shall have the activate toggle only
+            // it is handled out of this scope
+            resolve();
         }
-    }
-    else {
-        // popup shall have the activate toggle only
-        // it is handled out of this scope
-    }
+    });
     console.log("done main action..");
-    isRunning = false;
 }
 
 async function getDataFromStorage(requestedData) {
