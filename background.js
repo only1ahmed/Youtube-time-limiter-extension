@@ -112,8 +112,9 @@ async function listners() {
 
     const countdownInterval = setInterval(async () => {
         // check continusly to activate the block
-        if (isEnabled === true && timeLeft > 0 && isRunning === false) {
+        if (isEnabled === true && isRunning === false) {
             isRunning = true;
+            console.log("main action time interval..");
             await mainAction();
             isRunning = false;
         }
@@ -156,6 +157,7 @@ async function mainAction() {
                         clearInterval(countdownInterval);
                         chrome.storage.local.set({ timeLeft: timeLeft });
                         isRunning = false;
+                        resolve();
                         return;
                     }
                     timeLeft--;
@@ -178,16 +180,6 @@ async function mainAction() {
             }
             else {
                 resolve();
-
-                // // the popup shall ask for time input
-                // console.log("getting time limit..");
-                // chrome.runtime.sendMessage({ action: "getTimeLimit" }, (response) => {
-                //     // timeLimit = response.timeLimit;
-                //     // timeLeft = response.timeLimit;
-                //     // chrome.storage.local.set({ timeLimit: timeLimit });
-                //     // chrome.storage.local.set({ timeLeft: timeLeft });
-                // });
-
             }
         }
         else {
@@ -195,8 +187,9 @@ async function mainAction() {
             // it is handled out of this scope
             resolve();
         }
+        console.log("done main action..");
     });
-    console.log("done main action..");
+
 }
 
 async function getDataFromStorage(requestedData) {
