@@ -1,4 +1,4 @@
-const testing = true;
+const testing = false;
 document.addEventListener('DOMContentLoaded', () => {
     const submitButton = document.getElementById('timeSubmit');
     submitButton.addEventListener('click', submitTime);

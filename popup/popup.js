@@ -1,4 +1,4 @@
-const testing = true;
+const testing = false;
 document.addEventListener('DOMContentLoaded', () => {
     var allData;
     const toggleButton = document.getElementById('toggleButton');
