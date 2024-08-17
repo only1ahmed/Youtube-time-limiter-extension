@@ -4,7 +4,9 @@ let timeLeft;
 let timeLimit;
 let tabsids = new Set();
 let isRunning = false;
+
 // chrome.storage.local.clear();
+
 // main call to activate the background
 listners();
 
@@ -75,6 +77,7 @@ async function listners() {
             }
             else {
                 // send a message to content script to reload the page because the extension is disabled
+                sendResponse({ action: "hideTimer" });
                 reloadWebpage();
                 chrome.storage.local.set({ timeLeft: timeLeft }, () => {
                     console.log('Time left is: ', timeLeft);
@@ -165,7 +168,7 @@ async function mainAction() {
                         updateCountdownDisplay();
 
                     } else {
-                        // updateCountdownDisplay();
+                        updateCountdownDisplay();
 
                         clearInterval(countdownInterval);
                         chrome.storage.local.set({ timeLeft: 0 });
@@ -195,7 +198,7 @@ async function mainAction() {
 async function getDataFromStorage(requestedData) {
     // allData = await chrome.storage.local.get();
     // console.log(allData);
-    data = await chrome.storage.local.get(requestedData);
+    let data = await chrome.storage.local.get(requestedData);
 
     console.log("retrived data: ", requestedData, "and its value is: ", data[requestedData]);
     return data[requestedData];
@@ -224,17 +227,20 @@ function getTimeUntilMidnight() {
     const nextMidnight = new Date(now);
     nextMidnight.setHours(24, 0, 0, 0); // Set to 12:00 AM of the next day
 
+
     return nextMidnight - now;
 }
-
-function scheduleReset() {
+let cnt = 0;
+async function scheduleReset() {
     const timeUntilMidnight = getTimeUntilMidnight();
     console.log("time till the next reset: ", timeUntilMidnight);
     // Schedule the reset at midnight
     setTimeout(() => {
         // timeLeft = chrome.storage.local.get('timeLimit').timeLimit;
-        timeLeft = getDataFromStorage("timeLimit");
+        timeLeft = timeLimit;
         chrome.storage.local.set({ timeLeft: timeLeft });
+        // you have to reload the webpage
+        reloadWebpage();
         // Reschedule the action for the next midnight
         scheduleReset();
     }, timeUntilMidnight);
