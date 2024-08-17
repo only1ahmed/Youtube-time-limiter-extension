@@ -62,10 +62,12 @@ function toggleState(toggleButton) {
 
         }
         else {
-            console.log("Extension down, hide timer and the timerset and reload the page..");
+            if (response.action == "hideTimer") {
+                console.log("Extension down, hide timer and the timerset and reload the page..");
+                document.getElementById('timerSet').setAttribute('hidden', '');
+                document.getElementById('countdownDisplay').setAttribute('hidden', '');
+            }
 
-            document.getElementById('timerSet').setAttribute('hidden', '');
-            document.getElementById('countdownDisplay').setAttribute('hidden', '');
         }
     });
 
