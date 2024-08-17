@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<link href="reset.css" rel="stylesheet" type="text/css" />
+<script type="module" src="reset.js"></script>
+
+<div class="container">
+    <div class="title">Welcome to Youtube time limiter</div>
+    <div id="back">
+        <a href="../popup/popup.html">
+            <button type="button" id="backButton">Return back</button>
+        </a>
+    </div>
+    <div id="timerSet">
+        <div id="timeInput">
+            <label for="hoursInput">Hours:</label>
+            <input type="number" id="hoursInput" placeholder="0" min="0" required>
+            <label for="minutesInput">Minutes:</label>
+            <input type="number" id="minutesInput" placeholder="0" min="0" max="59" required>
+            <a href="../popup/popup.html">
+                <button type="button" id="timeSubmit">Submit</button>
+            </a>
+        </div>
+    </div>
+
+</div>
+
+</html>

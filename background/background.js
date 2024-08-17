@@ -88,6 +88,10 @@ async function listners() {
             });
         }
         if (message.action === "setTime") {
+            // reload the page if the timeLeft is 0
+            if (timeLeft === 0) {
+                reloadWebpage();
+            }
             // if the user set the timelimit to a value less than the time he spent, then the timeleft will be 0
             timeLeft = Math.max((timeLeft || 0) + (message.timeLimit - (timeLimit || 0)), 0);
             console.log("new time left:", timeLeft);
@@ -95,7 +99,6 @@ async function listners() {
             chrome.storage.local.set({ timeLimit: message.timeLimit }, () => {
                 console.log('Time limit set to: ', message.timeLimit);
             });
-
 
         }
 
@@ -230,17 +233,18 @@ function getTimeUntilMidnight() {
 
     return nextMidnight - now;
 }
-let cnt = 0;
 async function scheduleReset() {
+    // Schedule the reset at midnight
     const timeUntilMidnight = getTimeUntilMidnight();
     console.log("time till the next reset: ", timeUntilMidnight);
-    // Schedule the reset at midnight
     setTimeout(() => {
         // timeLeft = chrome.storage.local.get('timeLimit').timeLimit;
         timeLeft = timeLimit;
         chrome.storage.local.set({ timeLeft: timeLeft });
-        // you have to reload the webpage
-        reloadWebpage();
+        // you have to reload the webpage if the extension was enabled
+        if (isEnabled) {
+            reloadWebpage();
+        }
         // Reschedule the action for the next midnight
         scheduleReset();
     }, timeUntilMidnight);
