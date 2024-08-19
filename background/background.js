@@ -154,7 +154,7 @@ async function mainAction() {
     // TODO: handle async calls
     return new Promise((resolve, reject) => {
 
-        if (isEnabled === true) {
+        if (isEnabled === true && tabsids.size > 0) {
             if (timeLeft <= 0) {
                 // message contentscript to edit the youtube page to prevent the user from accessing youtube
                 console.log("time is up before, you should blockwebpage..");
@@ -173,7 +173,7 @@ async function mainAction() {
                 console.log(timeLeft, 'time left');
                 const countdownInterval = setInterval(() => {
                     // at any point of time, if the toggle swtich is off, stop the countdown and save the timeleft into the memory
-                    if (!isEnabled) {
+                    if (!isEnabled || tabsids.size <= 0) {
                         clearInterval(countdownInterval);
                         chrome.storage.local.set({ timeLeft: timeLeft });
                         isRunning = false;
