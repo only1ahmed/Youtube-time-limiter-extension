@@ -2,6 +2,7 @@
 let isEnabled;
 let timeLeft;
 let timeLimit;
+let lastResetDate;
 let tabsids = new Set();
 let isRunning = false;
 
@@ -15,6 +16,7 @@ async function getStartingData() {
     isEnabled = await getDataFromStorage("enabled");
     timeLeft = await getDataFromStorage("timeLeft");
     timeLimit = await getDataFromStorage("timeLimit");
+    lastResetDate = await getDataFromStorage("lastResetDate");
 }
 
 async function listners() {
@@ -24,11 +26,23 @@ async function listners() {
     isEnabled = await getDataFromStorage("enabled");
     timeLeft = await getDataFromStorage("timeLeft");
     timeLimit = await getDataFromStorage("timeLimit");
+    lastResetDate = await getDataFromStorage("lastResetDate");
     console.log("the starting data: ");
     console.log("enabled: ", isEnabled);
     console.log("time left: ", timeLeft);
     console.log("time limit: ", timeLimit);
-
+    console.log("lastResetDate: ", lastResetDate);
+    if (lastResetDate === undefined) {
+        lastResetDate = new Date().setHours(0, 0, 0, 0);
+        chrome.storage.local.set({ lastResetDate: lastResetDate });
+    }
+    // check whether the time left should be reset or not
+    if (new Date() - lastResetDate >= 60 * 60 * 24) {
+        timeLeft = timeLimit;
+        lastResetDate = new Date().setHours(0, 0, 0, 0);
+        chrome.storage.local.set({ timeLeft: timeLeft });
+        chrome.storage.local.set({ lastResetDate: lastResetDate });
+    }
     chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
         if (changeInfo.status === 'complete' && tab.url) {
             if (tab.url.includes("youtube.com")) {
@@ -240,7 +254,9 @@ async function scheduleReset() {
     setTimeout(() => {
         // timeLeft = chrome.storage.local.get('timeLimit').timeLimit;
         timeLeft = timeLimit;
+        lastResetDate = new Date().setHours(24, 0, 0, 0);
         chrome.storage.local.set({ timeLeft: timeLeft });
+        chrome.storage.local.set({ lastResetDate: lastResetDate });
         // you have to reload the webpage if the extension was enabled
         if (isEnabled) {
             reloadWebpage();
