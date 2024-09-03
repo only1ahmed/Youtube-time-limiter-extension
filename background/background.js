@@ -37,7 +37,8 @@ async function listners() {
         chrome.storage.local.set({ lastResetDate: lastResetDate });
     }
     // check whether the time left should be reset or not
-    if (new Date() - lastResetDate >= 60 * 60 * 24) {
+    let curTime = new Date();
+    if (curTime - lastResetDate >= 1000 * 60 * 60 * 24) {
         timeLeft = timeLimit;
         lastResetDate = new Date().setHours(0, 0, 0, 0);
         chrome.storage.local.set({ timeLeft: timeLeft });
