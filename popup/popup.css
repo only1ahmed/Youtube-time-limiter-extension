@@ -19,6 +19,10 @@
   font-size: 14px;
   font-weight: bold;
   padding: 8px;
+  display: flex;
+  justify-content: center; 
+  position: relative;
+  height: 50vh;
 }
 
 .textbox {
@@ -26,6 +30,7 @@
   font-size: 12px;
   margin: 0;
   padding: 0px 2px;
+  
 }
 
 .textbox:focus {
@@ -81,4 +86,12 @@ input:checked + label:after {
 
 label:active:after {
   width: var(--active-after-width);
+}
+
+
+#ActivationButton{
+  display: flex;
+  justify-content: center;
+  /* position: relative; */
+  /* height: 100vh; */
 }

@@ -1,39 +1,46 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="popup.css" rel="stylesheet" type="text/css">
-  <title>Youtube Time Limiter</title>
-</head>
-<body>
-  <div class="container">
-    <div class="title">Welcome to Youtube Time Limiter</div>
+  <!DOCTYPE html>
+    <head>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link href="popup.css" rel="stylesheet" type="text/css" />
+    </head>
 
-    <div id="ActivationButton">
-      <input type="checkbox" id="toggleButton" class="toggle-checkbox">
-      <label for="toggleButton">Activate</label>
-    </div>
+    <body>
+      <script type="module" src="popup.js"></script>
 
-    <div id="timerSet" hidden>
-      <div id="timeInput">
-        <label for="hoursInput">Hours:</label>
-        <input type="number" id="hoursInput" placeholder="0" min="0" required>
+      <div class="container">
         
-        <label for="minutesInput">Minutes:</label>
-        <input type="number" id="minutesInput" placeholder="0" min="0" max="59" required>
-        
-        <button type="button" id="timeSubmit">Submit</button>
+        <div class="title">Welcome to Youtube time limiter</div>
+
+        <div id="ActivationButton">
+          <input type="checkbox" id="toggleButton" class="toggle-checkbox">
+          <label for="toggleButton">Activate</label>
+        </div>
+
+        <div id="timerSet" hidden>
+
+          <div id="timeInput">
+            <label for="hoursInput">Hours:</label>
+            <input type="number" id="hoursInput" placeholder="0" min="0" required>
+            <label for="minutesInput">Minutes:</label>
+            <input type="number" id="minutesInput" placeholder="0" min="0" max="59" required>
+            <button type="button" id="timeSubmit">Submit</button>
+          </div>
+
+        </div>
+
+
+        <button type="button" id="resetButton" hidden>reset</button>
+
+        <div id="countdownDisplay" hidden></div>
+
+        <div id="reset">
+          <a href="../reset/reset.html">
+            <button type="button" id="resetButton">Reset</button>
+          </a>
+        </div>
+
       </div>
-    </div>
 
-    <div id="countdownDisplay" hidden></div>
 
-    <div id="reset">
-      <button type="button" id="resetButton">Reset</button>
-    </div>
-  </div>
-
-  <script type="module" src="popup.js"></script>
-</body>
-</html>
+    </body>
+  </html>
