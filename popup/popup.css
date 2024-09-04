@@ -1,3 +1,15 @@
+:root {
+  --label-width: 200px;
+  --label-height: 100px;
+  --label-border-radius:100px;
+  --after-top: 5px;
+  --after-left: 5px;
+  --after-width: 90px;
+  --after-height: 90px;
+  --after-border-radius: 90px;
+  --active-after-width: 130px;
+}
+
 .container {
   width: 280px;
   color: #314d3e;
@@ -38,23 +50,23 @@ input[type=checkbox] {
 label {
   cursor: pointer;
   text-indent: -9999px;
-  width: 200px;
-  height: 100px;
+  width: var(--label-width);
+  height: var(--label-height);
   background: grey;
   display: block;
-  border-radius: 100px;
+  border-radius: var(--label-border-radius);
   position: relative;
 }
 
 label:after {
   content: '';
   position: absolute;
-  top: 5px;
-  left: 5px;
-  width: 90px;
-  height: 90px;
+  top: var(--after-top);
+  left: var(--after-left);
+  width: var(--after-width);
+  height: var(--after-height);
   background: #fff;
-  border-radius: 90px;
+  border-radius: var(--after-border-radius);
   transition: 0.3s;
 }
 
@@ -63,9 +75,10 @@ input:checked + label {
 }
 
 input:checked + label:after {
-  left: calc(100% - 95px);
+	left: calc(100% - 5px);
+	transform: translateX(-100%);
 }
 
 label:active:after {
-  width: 130px;
+  width: var(--active-after-width);
 }

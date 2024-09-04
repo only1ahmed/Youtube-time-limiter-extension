@@ -100,3 +100,30 @@ function updateCountdownDisplay(timeLeft) {
 }
 
 
+
+// :root {
+//     --label-width: 200px;
+//     --label-height: 100px;
+//     --label-border-radius:100px;
+//     --after-top: 5px;
+//     --after-left: 5px;
+//     --after-width: 90px;
+//     --after-height: 90px;
+//     --after-border-radius: 90px;
+//     --active-after-width: 130px;
+//   }
+
+// activation button
+document.addEventListener('DOMContentLoaded', () => {
+    const root = document.documentElement;
+    const sz = 50; // Base width in pixels
+    root.style.setProperty('--label-width', `${sz}px`);
+    root.style.setProperty('--label-height', `${sz/2}px`);
+    root.style.setProperty('--label-border-radius', `${sz/2}px`);
+    root.style.setProperty('--after-top', `${sz/40}px`);
+    root.style.setProperty('--after-left', `${sz/40}px`);
+    root.style.setProperty('--after-width', `${sz / (20/9)}px`);
+    root.style.setProperty('--after-height', `${sz/ (20/9)}px`);
+    root.style.setProperty('--after-border-radius', `${sz/ (20/9)}px`);
+    root.style.setProperty('--active-after-width', `${sz/ (20/13)}px`);
+  });
