@@ -254,6 +254,7 @@ async function scheduleReset() {
     console.log("time till the next reset: ", timeUntilMidnight);
     setTimeout(() => {
         // timeLeft = chrome.storage.local.get('timeLimit').timeLimit;
+        console.log("Time left had been reset.");
         timeLeft = timeLimit;
         lastResetDate = new Date().setHours(24, 0, 0, 0);
         chrome.storage.local.set({ timeLeft: timeLeft });
